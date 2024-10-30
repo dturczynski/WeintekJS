@@ -1,40 +1,50 @@
-const request = require('./tutorial-webrequest_request-0.0.3.js');
-const decoder = new TextDecoder(); // utf-8
+//DoTu 20241030
+
+const request = require('./request-0.0.4.js');
 let self = this;
 
+async function sendMeassage() {
 // Read machine data1
-let machineData_uShort16 = await driver.promises.getData(this.config.machineData_uShort16, 10);
-console.log("Machine data1: ", machineData_uShort16.values);
+let machineData_uShort = await driver.promises.getData(self.config.machineData_uShort, 10);
+//console.log("Machine data1: ", machineData_uShort.values);
 
 // Read machine data2
-let machineData_bool = await driver.promises.getData(this.config.machineData_bool, 10);
-console.log("Machine data2: ", machineData_bool.values);
+let machineData_bool = await driver.promises.getData(self.config.machineData_bool, 10);
+//console.log("Machine data2: ", machineData_bool.values);
+// Convert 0, 1 to false, true
+machineData_bool.values = machineData_bool.values.map(value => {
+    return value === "true" || value === 1 || value === "1";
+});
+//console.log("Machine data converted: ", machineData_bool.values);
 
 // Read machine data3
-let machineData_float = await driver.promises.getData(this.config.machineData_float, 10);
-console.log("Machine data3: ", machineData_float.values);
+let machineData_float = await driver.promises.getData(self.config.machineData_float, 10);
+//console.log("Machine data3: ", machineData_float.values);
 
 
-async function sendMeassage() {
 let URL = 'http://127.0.0.1:1880/testNodeRed/?';
+URL += '&machineData1='
+URL += machineData_uShort.values;
+URL += '&machineData2='
+URL += machineData_bool.values;
+URL += '&machineData3='
+URL += machineData_float.values;
+ console.log("URL:", URL);
 
-URL = URL + machineData_uShort16.values;
-
- console.log("zapytanie:", URL_);
 // Send the get request
 request.get({
-        url: URL_
+        url: URL
     }, 
     function (error, response, body) {
-        // wypisanie w konsoli zwróconej przez RUT odpowiedzi
-        console.log("body:", body);
+        //show response
+        console.log("Server response:", body);
     }
     )
 }
 
-// wywołąnie funkcji (wysłanie do RUT URL z koemndą wysłąnia wiadomości)
-sendMeassage();
 
+
+sendMeassage();
 
 
 
